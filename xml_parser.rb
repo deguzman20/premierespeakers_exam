@@ -1,6 +1,6 @@
 require 'xmlsimple'
 
-# this class parse
+# there have no b029 and b041 on XML file
 class XmlParser
   def call
     parse_xml
@@ -13,7 +13,7 @@ private
 
     data['product'].each do |product|
       @text = <<-TEXT
-        isbn: b244 if its sibling b221 is 15
+        isbn: #{product['productidentifier'][3]['b244'][9]} if its sibling #{product['productidentifier'][3]['b221'][0]} is 15
         title: #{product['title'][0]['b203'][0]}
         subtitle: b029
         publishing status: #{product['b394'][0]['content']}
@@ -23,16 +23,16 @@ private
         number of pages: #{product['b061'][0]}
         publication_date: #{product['b003'][0]}
         product_form: #{product['b012'][0]}
-        price: price in USD
-        description: othertext #{product['othertext'][0]['d104'][0]['content']}
+        price: #{product['supplydetail'][0]['price'][6].nil? ? nil : product['supplydetail'][0]['price'][6]['j151'][0]}
+        description: #{product['othertext'][0]['d104'][0]['content']}
         height: measure #{product['measure'][0]['c094'][0]} if its sibbling #{product['measure'][0]['c093'][0]} is 01
         length: measure #{product['measure'][2]['c094'][0]} if its sibbling #{product['measure'][2]['c093'][0]} 03
         width: measure #{product['measure'][2]['c094'][0]} if its sibbling #{product['measure'][2]['c093'][0]} is 03
         weight: measure #{product['measure'][3]['c094'][0]} if its sibbling #{product['measure'][3]['c093'][0]} is 08
-        bisac_code: b064 #{product['b064']}
-        bisac_code2: subject b069 #{product['subject']}
-        bisac_code3: next code available after bisac_code2
-        media_file: mediafile
+        bisac_code: #{product['b064'].nil? ? nil : product['b064'][0]}
+        bisac_code2: #{!product['subject'].nil? && product['subject'][0].key?('b069') ? product['subject'][0]['b069'][0] : nil}
+        bisac_code3: #{product['subject'].nil? ? nil : product['subject'][0]['b070']}
+        media_file: #{!product['mediafile'].nil? && product['mediafile'][0].key?('f117') ? product['mediafile'][0]['f117'][0] : nil}
 
       TEXT
       puts @text
@@ -40,5 +40,5 @@ private
   end
 end
 
-# x = XmlParser.new
-# x.call
+x = XmlParser.new
+x.call
