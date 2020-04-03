@@ -15,3 +15,6 @@ private
     `curl -X GET https://www.googleapis.com/books/v1/volumes?q=#{name}`
   end
 end
+
+book = Book.new("harry potter")
+pp book.call
