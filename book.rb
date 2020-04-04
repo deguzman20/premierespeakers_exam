@@ -1,4 +1,4 @@
-# Find your favarate book
+# Find your favorate book
 class Book
   attr_accessor :name
 
